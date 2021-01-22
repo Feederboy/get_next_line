@@ -6,7 +6,7 @@
 /*   By: matt <maquentr@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/21 20:53:48 by matt              #+#    #+#             */
-/*   Updated: 2021/01/21 22:40:25 by matt             ###   ########.fr       */
+/*   Updated: 2021/01/22 15:27:01 by maquentr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,28 @@
 
 int		get_next_line(int fd, char **line)
 {
-	char buf[10 + 1];
+	static char *s;
+	char buf[BUFFER_SIZE];
 	int byte_was_read;
 	int retour_ligne;
 	char *p_n;
-
+	
 	retour_ligne = 1;
-	*line = "\0";
-	while (retour_ligne && (byte_was_read = read(fd, buf, 10)))
+	if (s)
+		*line = ft_strdup(s);
+	else
+		*line = "\0";
+	while (retour_ligne && (byte_was_read = read(fd, buf, BUFFER_SIZE)))
 	{
 		buf[byte_was_read] = '\0';
-		printf("buf = %s\n", buf);
-		if ((p_n = ft_strchr(buf, '\n')))
+		if ((p_n = ft_strchr(buf, '\n'))) //fais pointer p_n sur buf au niveau du \n
 		{
-			//*p_n = '\0';
-			retour_ligne = 0;
+			s = p_n + 1; //stocke le reste apres la ligne dans s, sans le \n
+			printf("s = %s FIN\n", s);
+			*p_n = '\0'; //supprime le reste de la ligne a partir de l'endroit pointe (au \n)
+			retour_ligne = 0; //sort de la boucle car \n rencontre
 		}
 		*line = ft_strjoin(*line, buf);
-		printf("line = %s\n", *line);
 	}
 	return (0);
 }
@@ -42,6 +46,8 @@ int main()
 	int fd;
 	
 	fd = open("test.txt", O_RDONLY);
+	get_next_line(fd, &line);
+	printf("%s\n", line);
 	get_next_line(fd, &line);
 	printf("%s\n", line);
 	get_next_line(fd, &line);
