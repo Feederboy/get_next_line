@@ -6,25 +6,31 @@
 /*   By: matt <maquentr@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/21 20:53:48 by matt              #+#    #+#             */
-/*   Updated: 2021/01/22 15:27:01 by maquentr         ###   ########.fr       */
+/*   Updated: 2021/01/22 15:40:37 by maquentr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
+static char	**check_static(char *s, char **line)
+{
+	if (s)
+		*line = ft_strdup(s);
+	else
+		*line = "\0";
+	return (line);
+}
 int		get_next_line(int fd, char **line)
 {
 	static char *s;
-	char buf[BUFFER_SIZE];
+	char buf[BUFFER_SIZE + 1];
 	int byte_was_read;
 	int retour_ligne;
 	char *p_n;
 	
 	retour_ligne = 1;
-	if (s)
-		*line = ft_strdup(s);
-	else
-		*line = "\0";
+	
+	check_static(s, line);
 	while (retour_ligne && (byte_was_read = read(fd, buf, BUFFER_SIZE)))
 	{
 		buf[byte_was_read] = '\0';
