@@ -6,7 +6,7 @@
 /*   By: matt <maquentr@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/21 21:03:19 by matt              #+#    #+#             */
-/*   Updated: 2021/01/21 22:01:32 by matt             ###   ########.fr       */
+/*   Updated: 2021/01/27 13:57:27 by maquentr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,10 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <stdio.h>
+
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 1
+# endif
 
 size_t		ft_strlcpy(char *dest, const char *src, size_t size);
 int		ft_strlen(const char *str);
