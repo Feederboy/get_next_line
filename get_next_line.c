@@ -6,13 +6,13 @@
 /*   By: matt <maquentr@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/21 20:53:48 by matt              #+#    #+#             */
-/*   Updated: 2021/01/27 17:01:24 by maquentr         ###   ########.fr       */
+/*   Updated: 2021/01/28 16:16:45 by maquentr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int		is_line(char *tmp)
+int				is_line(char *tmp)
 {
 	int	i;
 
@@ -25,7 +25,7 @@ int		is_line(char *tmp)
 	return (0);
 }
 
-static char	*check_static(char *s, char **line)
+static char		*check_static(char *s, char **line)
 {
 	char *p_n;
 
@@ -34,37 +34,41 @@ static char	*check_static(char *s, char **line)
 		if ((p_n = ft_strchr(s, '\n')))
 		{
 			*p_n = '\0';
-			*line = ft_strdup(s);
-			//if (!(*line))
-			//	return (-1);
-			if (p_n + 1)
-				++p_n;
+			if (!(*line = ft_strdup(s)))
+				return (NULL);
+			++p_n;
 			ft_strlcpy(s, p_n, ft_strlen(p_n) + 1);
 		}
 		else
 		{
-			*line = ft_strdup(s);
-			//if (!(*line))
-			//	return (NULL);
+			if (!(*line = ft_strdup(s)))
+				return (NULL);
 			s = "\0";
 		}
 	else
 	{
 		if (!(*line = malloc(sizeof(char) * 1)))
 			return (NULL);
-		line[0] = "\0";
+		(*line)[0] = '\0';
 	}
 	return (p_n);
 }
 
-int		get_next_line(int fd, char **line)
+int				check_end(char **s, char **line, int byte_was_read)
 {
-	static char *s[2000];
-	char buf[BUFFER_SIZE + 1];
-	int byte_was_read;
-	char *p_n;
+	if ((is_line(*s) > 0 || is_line(*line) > 0) || byte_was_read != 0)
+		return (1);
+	else
+		return (0);
+}
 
-	p_n = NULL;
+int				get_next_line(int fd, char **line)
+{
+	static char		*s[2000];
+	char			buf[BUFFER_SIZE + 1];
+	int				byte_was_read;
+	char			*p_n;
+
 	if (fd < 0 || BUFFER_SIZE < 1 || !line)
 		return (-1);
 	p_n = check_static(s[fd], line);
@@ -73,40 +77,16 @@ int		get_next_line(int fd, char **line)
 		if (byte_was_read < 0)
 			return (-1);
 		buf[byte_was_read] = '\0';
-		if (ft_strchr(buf, '\n')) //fais pointer p_n sur buf au niveau du \n
+		if ((p_n = ft_strchr(buf, '\n')))
 		{
-			p_n = ft_strchr(buf, '\n');
-			*p_n = '\0'; //supprime le reste de la ligne a partir de l'endroit pointe sur buf (\n)
-			if (p_n + 1)
-				p_n++; //skip \n
-			s[fd] = ft_strdup(p_n);
-			if (!s[fd])
+			*p_n = '\0';
+			++p_n;
+			free(s[fd]);
+			if (!(s[fd] = ft_strdup(p_n)))
 				return (-1);
 		}
-		*line = ft_strjoin(*line, buf);
+		if (!(*line = ft_strjoin(*line, buf)))
+			return (-1);
 	}
-	if (is_line(s[fd]) > 0)
-		return (1);
-//	if (s[fd])
-//		return (byte_was_read || ft_strlen(s[fd]) || (ft_strlen(*line))) ? 1 : 0; //si rien dans byte et s et line alors fin du game
-	else
-		return (-1);
+	return (check_end(&s[fd], line, byte_was_read));
 }
-
-
-int main(int ac, char **av)
-{
-	int fd;
-	char *line;
-	(void)ac;
-
-	fd = open(av[1], O_RDONLY);
-	while (get_next_line(fd, &line))
-	{
-		printf("line = %s\n", line);
-		free(line);
-	}
-	close(fd);
-	return (0);
-}
-
