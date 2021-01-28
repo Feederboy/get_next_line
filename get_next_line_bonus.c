@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: matt <maquentr@student.42.fr>              +#+  +:+       +#+        */
+/*   By: maquentr <maquentr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/01/21 20:53:48 by matt              #+#    #+#             */
-/*   Updated: 2021/01/28 16:40:47 by maquentr         ###   ########.fr       */
+/*   Created: 2021/01/28 16:42:12 by maquentr          #+#    #+#             */
+/*   Updated: 2021/01/28 16:44:33 by maquentr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 int				is_line(char *tmp)
 {
