@@ -6,7 +6,7 @@
 /*   By: matt <maquentr@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/21 20:53:48 by matt              #+#    #+#             */
-/*   Updated: 2021/01/28 16:40:47 by maquentr         ###   ########.fr       */
+/*   Updated: 2021/02/01 17:15:37 by matt             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,11 @@ int				get_next_line(int fd, char **line)
 	while (!p_n && (byte_was_read = read(fd, buf, BUFFER_SIZE)))
 	{
 		if (byte_was_read < 0)
+		{
+			free(*line);
+			*line = NULL;
 			return (-1);
+		}
 		buf[byte_was_read] = '\0';
 		if ((p_n = ft_strchr(buf, '\n')))
 		{
