@@ -6,13 +6,13 @@
 /*   By: maquentr <maquentr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/28 16:42:12 by maquentr          #+#    #+#             */
-/*   Updated: 2021/02/02 16:17:13 by matt             ###   ########.fr       */
+/*   Updated: 2021/02/02 17:04:48 by matt             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-int				is_line(char *tmp)
+static	int		is_line(char *tmp)
 {
 	int	i;
 
@@ -54,7 +54,7 @@ static char		*check_static(char *s, char **line)
 	return (p_n);
 }
 
-int				check_end(char **s, char **line, int byte_was_read)
+static	int		check_end(char **s, char **line, int byte_was_read)
 {
 	if ((is_line(*s) > 0 || is_line(*line) > 0) || byte_was_read != 0)
 		return (1);
