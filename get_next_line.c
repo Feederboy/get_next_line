@@ -6,7 +6,7 @@
 /*   By: matt <maquentr@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/21 20:53:48 by matt              #+#    #+#             */
-/*   Updated: 2021/02/01 17:15:37 by matt             ###   ########.fr       */
+/*   Updated: 2021/02/02 16:15:23 by matt             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,17 @@ int				check_end(char **s, char **line, int byte_was_read)
 		return (0);
 }
 
+static int		free_if_newline(char **s, char **p_n)
+{
+	**p_n = '\0';
+	++(*p_n);
+	free(*s);
+	if (!(*s = ft_strdup(*p_n)))
+		return (-1);
+	else
+		return (1);
+}
+
 int				get_next_line(int fd, char **line)
 {
 	static char		*s[2000];
@@ -82,13 +93,7 @@ int				get_next_line(int fd, char **line)
 		}
 		buf[byte_was_read] = '\0';
 		if ((p_n = ft_strchr(buf, '\n')))
-		{
-			*p_n = '\0';
-			++p_n;
-			free(s[fd]);
-			if (!(s[fd] = ft_strdup(p_n)))
-				return (-1);
-		}
+			free_if_newline(&s[fd], &p_n);
 		if (!(*line = ft_strjoin(*line, buf)))
 			return (-1);
 	}
