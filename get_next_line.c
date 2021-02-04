@@ -6,7 +6,7 @@
 /*   By: matt <maquentr@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/21 20:53:48 by matt              #+#    #+#             */
-/*   Updated: 2021/02/02 17:05:24 by matt             ###   ########.fr       */
+/*   Updated: 2021/02/04 17:14:15 by matt             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ int				get_next_line(int fd, char **line)
 		buf[byte_was_read] = '\0';
 		if ((p_n = ft_strchr(buf, '\n')))
 			free_if_newline(&s[fd], &p_n);
+		free(*line);
 		if (!(*line = ft_strjoin(*line, buf)))
 			return (-1);
 	}
