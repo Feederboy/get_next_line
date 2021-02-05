@@ -6,7 +6,7 @@
 /*   By: matt <maquentr@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/21 20:53:48 by matt              #+#    #+#             */
-/*   Updated: 2021/02/05 13:25:34 by matt             ###   ########.fr       */
+/*   Updated: 2021/02/05 13:39:42 by matt             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,8 +28,8 @@ static	int		check_end(char **s, char **line, int byte_was_read, int fd)
 
 static int		free_if_newline(char **s, char **line)
 {
-	char *tmp;
-	int i;
+	char	*tmp;
+	int		i;
 
 	i = 0;
 	while ((*s)[i] != '\n' && (*s)[i] != '\0')
@@ -80,28 +80,4 @@ int				get_next_line(int fd, char **line)
 	}
 	free_if_newline(&s[fd], line);
 	return (check_end(s, line, byte_was_read, fd));
-}
-
-int	main(void) {
-	int		fd = -1;
-	char	*line =	NULL;
-	int		ret;
-
-	/* open file - if an error occurs here, the test will be ignored, that's not your fault ! */
-	if ((fd = open("empty_lines.txt", O_RDONLY)) == -1 || read(fd, NULL, 0) == -1) {
-		return (-1);
-	}
-
-	while ((ret = get_next_line(fd, &line)) > 0) {
-		printf("%s\n", line);
-		free(line);
-		line = NULL;
-	}
-	printf("return value: %d\n", ret);
-	free(line);
-
-	/* cleaning up */
-	close(fd);
-
-	return (0);
 }
