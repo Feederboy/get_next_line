@@ -6,11 +6,18 @@
 /*   By: matt <maquentr@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/21 20:53:48 by matt              #+#    #+#             */
-/*   Updated: 2021/02/05 15:07:35 by matt             ###   ########.fr       */
+/*   Updated: 2021/02/05 15:21:47 by matt             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+static int		free_and_null(char **str)
+{
+	free(*str);
+	*str = NULL;
+	return (-1);
+}
 
 static int		free_if_newline(char **s, char **line)
 {
@@ -43,13 +50,7 @@ static int		free_if_newline(char **s, char **line)
 
 static	int		check_end(char **s, char **line, int byte_was_read, int fd)
 {
-	if (byte_was_read < 0)
-	{
-		free(*line);
-		*line = NULL;
-		return (-1);
-	}
-	else if (byte_was_read == 0 && !s[fd])
+	if (byte_was_read == 0 && !s[fd])
 		return (0);
 	else
 		return (free_if_newline(&s[fd], line));
@@ -66,6 +67,8 @@ int				get_next_line(int fd, char **line)
 		return (-1);
 	while ((byte_was_read = read(fd, buf, BUFFER_SIZE)))
 	{
+		if (byte_was_read < 0)
+			return (free_and_null(line));
 		buf[byte_was_read] = '\0';
 		if (!s[fd])
 			s[fd] = ft_strdup(buf);
