@@ -6,7 +6,7 @@
 /*   By: maquentr <maquentr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/28 16:44:57 by maquentr          #+#    #+#             */
-/*   Updated: 2021/01/28 16:45:36 by maquentr         ###   ########.fr       */
+/*   Updated: 2021/02/05 13:30:19 by matt             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,38 +22,52 @@ int		ft_strlen(const char *str)
 	return (i);
 }
 
-size_t	ft_strlcpy(char *dest, const char *src, size_t size)
+char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
-	size_t len;
-	size_t i;
+	size_t	i;
+	char	*res;
 
 	i = 0;
-	while ((src[i]) && i + 1 < size)
-	{
-		dest[i] = src[i];
-		i++;
-	}
-	if (size > 0)
-		dest[i] = '\0';
-	len = 0;
-	while (src[len])
-		len++;
-	return (len);
-}
-
-char	*ft_strdup(const char *s)
-{
-	char	*p;
-	size_t	size;
-
 	if (!s)
 		return (NULL);
-	size = ft_strlen(s) + 1;
-	p = malloc((size) * sizeof(char));
-	if (!p)
+	res = malloc(sizeof(char) * (len + 1));
+	if (!res)
 		return (NULL);
-	ft_strlcpy(p, s, size);
-	return (p);
+	if (start > (unsigned int)ft_strlen(s))
+	{
+		res[i] = '\0';
+		return (res);
+	}
+	while (i < len && s[start])
+	{
+		res[i] = s[start];
+		i++;
+		start++;
+	}
+	res[i] = '\0';
+	return (res);
+}
+
+char	*ft_strdup(const char *s1)
+{
+	int		i;
+	int		size;
+	char	*str;
+
+	i = 0;
+	size = 0;
+	while (s1[size])
+		size += 1;
+	str = (char*)malloc(sizeof(*str) * size + 1);
+	if (str == NULL)
+		return (NULL);
+	while (i < size)
+	{
+		str[i] = s1[i];
+		i++;
+	}
+	str[size] = '\0';
+	return (str);
 }
 
 char	*ft_strjoin(char const *s1, char const *s2)

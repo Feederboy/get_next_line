@@ -6,71 +6,53 @@
 /*   By: maquentr <maquentr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/28 16:42:12 by maquentr          #+#    #+#             */
-/*   Updated: 2021/02/04 17:15:02 by matt             ###   ########.fr       */
+/*   Updated: 2021/02/05 13:28:09 by matt             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
-static	int		is_line(char *tmp)
+static	int		check_end(char **s, char **line, int byte_was_read, int fd)
 {
-	int	i;
-
-	i = -1;
-	if (!tmp)
+	if (byte_was_read < 0)
+	{
+		free(*line);
+		*line = NULL;
 		return (-1);
-	while (tmp[++i])
-		if (tmp[i] == '\n')
-			return (1);
-	return (0);
+	}
+	else if (byte_was_read == 0 && !s[fd])
+		return (0);
+	else
+		return (1);
 }
 
-static char		*check_static(char *s, char **line)
+static int		free_if_newline(char **s, char **line)
 {
-	char *p_n;
+	char *tmp;
+	int i;
 
-	p_n = NULL;
-	if (s)
-		if ((p_n = ft_strchr(s, '\n')))
+	i = 0;
+	while ((*s)[i] != '\n' && (*s)[i] != '\0')
+		i++;
+	if ((*s)[i] == '\n')
+	{
+		*line = ft_substr(*s, 0, i);
+		tmp = ft_strdup(&((*s)[i + 1]));
+		free(*s);
+		*s = tmp;
+		if ((*s)[0] == '\0')
 		{
-			*p_n = '\0';
-			if (!(*line = ft_strdup(s)))
-				return (NULL);
-			++p_n;
-			ft_strlcpy(s, p_n, ft_strlen(p_n) + 1);
+			free(*s);
+			*s = NULL;
 		}
-		else
-		{
-			if (!(*line = ft_strdup(s)))
-				return (NULL);
-			s = "\0";
-		}
+	}
 	else
 	{
-		if (!(*line = malloc(sizeof(char) * 1)))
-			return (NULL);
-		(*line)[0] = '\0';
+		*line = ft_strdup(*s);
+		free(*s);
+		*s = NULL;
 	}
-	return (p_n);
-}
-
-static	int		check_end(char **s, char **line, int byte_was_read)
-{
-	if ((is_line(*s) > 0 || is_line(*line) > 0) || byte_was_read != 0)
-		return (1);
-	else
-		return (0);
-}
-
-static int		free_if_newline(char **s, char **p_n)
-{
-	**p_n = '\0';
-	++(*p_n);
-	free(*s);
-	if (!(*s = ft_strdup(*p_n)))
-		return (-1);
-	else
-		return (1);
+	return (1);
 }
 
 int				get_next_line(int fd, char **line)
@@ -80,23 +62,46 @@ int				get_next_line(int fd, char **line)
 	int				byte_was_read;
 	char			*p_n;
 
-	if (fd < 0 || BUFFER_SIZE < 1 || !line)
+	if (fd < 0 || !line)
 		return (-1);
-	p_n = check_static(s[fd], line);
-	while (!p_n && (byte_was_read = read(fd, buf, BUFFER_SIZE)))
+	while ((byte_was_read = read(fd, buf, BUFFER_SIZE)))
 	{
-		if (byte_was_read < 0)
-		{
-			free(*line);
-			*line = NULL;
-			return (-1);
-		}
 		buf[byte_was_read] = '\0';
-		if ((p_n = ft_strchr(buf, '\n')))
-			free_if_newline(&s[fd], &p_n);
-		free(*line);
-		if (!(*line = ft_strjoin(*line, buf)))
-			return (-1);
+		if (!s[fd])
+			s[fd] = ft_strdup(buf);
+		else
+		{
+			p_n = ft_strjoin(s[fd], buf);
+			free(s[fd]);
+			s[fd] = p_n;
+		}
+		if (ft_strchr(buf, '\n'))
+			break ;
 	}
-	return (check_end(&s[fd], line, byte_was_read));
+	free_if_newline(&s[fd], line);
+	return (check_end(s, line, byte_was_read, fd));
+}
+
+int	main(void) {
+	int		fd = -1;
+	char	*line =	NULL;
+	int		ret;
+
+	/* open file - if an error occurs here, the test will be ignored, that's not your fault ! */
+	if ((fd = open("empty_lines.txt", O_RDONLY)) == -1 || read(fd, NULL, 0) == -1) {
+		return (-1);
+	}
+
+	while ((ret = get_next_line(fd, &line)) > 0) {
+		printf("%s\n", line);
+		free(line);
+		line = NULL;
+	}
+	printf("return value: %d\n", ret);
+	free(line);
+
+	/* cleaning up */
+	close(fd);
+
+	return (0);
 }
