@@ -6,25 +6,11 @@
 /*   By: maquentr <maquentr@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/28 16:42:12 by maquentr          #+#    #+#             */
-/*   Updated: 2021/02/05 13:40:35 by matt             ###   ########.fr       */
+/*   Updated: 2021/02/05 15:07:47 by matt             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
-
-static	int		check_end(char **s, char **line, int byte_was_read, int fd)
-{
-	if (byte_was_read < 0)
-	{
-		free(*line);
-		*line = NULL;
-		return (-1);
-	}
-	else if (byte_was_read == 0 && !s[fd])
-		return (0);
-	else
-		return (1);
-}
 
 static int		free_if_newline(char **s, char **line)
 {
@@ -55,6 +41,20 @@ static int		free_if_newline(char **s, char **line)
 	return (1);
 }
 
+static	int		check_end(char **s, char **line, int byte_was_read, int fd)
+{
+	if (byte_was_read < 0)
+	{
+		free(*line);
+		*line = NULL;
+		return (-1);
+	}
+	else if (byte_was_read == 0 && !s[fd])
+		return (0);
+	else
+		return (free_if_newline(&s[fd], line));
+}
+
 int				get_next_line(int fd, char **line)
 {
 	static char		*s[2000];
@@ -78,6 +78,5 @@ int				get_next_line(int fd, char **line)
 		if (ft_strchr(buf, '\n'))
 			break ;
 	}
-	free_if_newline(&s[fd], line);
 	return (check_end(s, line, byte_was_read, fd));
 }
